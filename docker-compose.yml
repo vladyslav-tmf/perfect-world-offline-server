@@ -1,0 +1,16 @@
+services:
+  pw-server:
+    container_name: pw-server
+    build: ./server
+    # The PW server binaries are x86-64. Docker Desktop on Windows runs them natively,
+    # Apple Silicon Macs run them through Rosetta (OrbStack or Docker Desktop).
+    platform: linux/amd64
+    volumes:
+      - ./game/server/root:/root
+      - ./game/server/home:/home
+      - ./game/mysql:/var/lib/mysql
+    ports:
+      # glinkd: the game client connects here
+      - "29000:29000"
+    # Give /root/server stop and MariaDB time to save everything
+    stop_grace_period: 60s

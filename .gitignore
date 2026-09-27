@@ -1,0 +1,4 @@
+# Game files are never committed: server/client archives, extracted files, database
+game/
+*.7z
+.DS_Store
