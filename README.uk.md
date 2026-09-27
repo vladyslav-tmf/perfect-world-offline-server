@@ -179,5 +179,6 @@ Perfect World є товарним знаком Perfect World Entertainment та 
 
 Щоб це запрацювало, довелося чимало поекспериментувати. Якщо вам цього робити вже не треба, можете закинути на каву:
 
-- Банка Монобанку: [send.monobank.ua/jar/4KTyhPctPn](https://send.monobank.ua/jar/4KTyhPctPn)
-- Картка банки: `4874 1000 3356 1112`
+[![Задонатити через Монобанк](https://img.shields.io/badge/%D0%97%D0%B0%D0%B4%D0%BE%D0%BD%D0%B0%D1%82%D0%B8%D1%82%D0%B8-%D0%9C%D0%BE%D0%BD%D0%BE%D0%B1%D0%B0%D0%BD%D0%BA-000000?style=for-the-badge)](https://send.monobank.ua/jar/4KTyhPctPn)
+
+Або напряму на картку: `4874 1000 3356 1112`

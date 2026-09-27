@@ -179,5 +179,6 @@ Perfect World is a trademark of Perfect World Entertainment and its licensors. T
 
 Getting this to run took a lot of trial and error. If it saved you that, you can chip in:
 
-- Monobank jar: [send.monobank.ua/jar/4KTyhPctPn](https://send.monobank.ua/jar/4KTyhPctPn)
-- Jar card: `4874 1000 3356 1112`
+[![Donate via Monobank](https://img.shields.io/badge/Donate-Monobank-000000?style=for-the-badge)](https://send.monobank.ua/jar/4KTyhPctPn)
+
+Or send to the card directly: `4874 1000 3356 1112`

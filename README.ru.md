@@ -179,5 +179,6 @@ Perfect World является товарным знаком Perfect World Enter
 
 Чтобы это заработало, пришлось немало поэкспериментировать. Если вам этого делать уже не нужно, можете закинуть на кофе:
 
-- Банка Монобанка: [send.monobank.ua/jar/4KTyhPctPn](https://send.monobank.ua/jar/4KTyhPctPn)
-- Карта банки: `4874 1000 3356 1112`
+[![Задонатить через Монобанк](https://img.shields.io/badge/%D0%97%D0%B0%D0%B4%D0%BE%D0%BD%D0%B0%D1%82%D0%B8%D1%82%D1%8C-%D0%9C%D0%BE%D0%BD%D0%BE%D0%B1%D0%B0%D0%BD%D0%BA-000000?style=for-the-badge)](https://send.monobank.ua/jar/4KTyhPctPn)
+
+Или напрямую на карту: `4874 1000 3356 1112`
