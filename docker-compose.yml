@@ -12,5 +12,5 @@ services:
     ports:
       # glinkd: the game client connects here
       - "29000:29000"
-    # Give /root/server stop and MariaDB time to save everything
-    stop_grace_period: 60s
+    # The entrypoint waits up to 100s for a gamedbd checkpoint before stopping
+    stop_grace_period: 180s

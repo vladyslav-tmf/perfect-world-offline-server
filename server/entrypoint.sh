@@ -42,8 +42,34 @@ chmod -R 777 /root/pwserver
 # script into a bash that traps USR1 keeps it alive long enough to start everything.
 setsid bash -c "trap 'true' USR1; . /root/server start" || true
 
-# On docker stop: stop the game first, then MariaDB, so both flush their data
+# /root/server stop kills everything with -9, so players and gamedbd lose unsaved data.
+# Drop the clients first (gs saves a role when its link goes away), then wait for
+# gamedbd to finish a checkpoint that started after that.
+flush_game() {
+    local log=/root/pwserver/logs/gamedbd.log
+
+    pkill glinkd || true
+    sleep 10
+
+    local target=$(( $(grep -c "checkpoint begin" "$log") + 1 ))
+
+    # checkpoint_interval is 60s. Give it some slack, then stop anyway.
+    for _ in $(seq 90); do
+        if [ "$(grep -c "checkpoint end" "$log")" -ge "$target" ]; then
+            echo "gamedbd checkpoint done, safe to stop"
+            # explicit 0: inside a trap a bare return yields the interrupted wait's 143, and set -e dies on it
+            return 0
+        fi
+
+        sleep 1
+    done
+
+    echo "WARNING: no gamedbd checkpoint seen in 90s, stopping anyway"
+}
+
+# On docker stop: flush the game, stop it, then MariaDB
 shutdown() {
+    flush_game
     /root/server stop
     mariadb-admin -u root -p"$DB_PASS" shutdown
     exit 0

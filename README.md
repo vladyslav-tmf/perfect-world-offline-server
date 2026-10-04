@@ -133,12 +133,12 @@ The 64-bit client (`element\x64\elementclient_64.exe`) doesn't start in CrossOve
 | Action | Command |
 |---|---|
 | Start the server | `docker compose up -d` (ready in about a minute) |
-| Stop the server | `docker compose stop` |
+| Stop the server | `docker compose stop` (takes up to two minutes) |
 | Server logs | `docker logs -f pw-server` |
 | Status of all daemons | `docker exec pw-server /root/server status` |
 | Create another account | `scripts/macos/create-account.sh <login> <password>` |
 
-Always stop the server with `docker compose stop`. It shuts the game down and then MariaDB, so nothing gets lost. Do not kill Docker or unplug the drive while the server is running.
+Always stop the server with `docker compose stop`, or the Stop button in OrbStack / Docker Desktop. The container disconnects the clients, waits until the game database is written to disk, and only then shuts down the game and MariaDB. This takes from 30 seconds to two minutes, do not interrupt it. To be safe, log out of the game before you stop the server. Do not kill Docker or unplug the drive while the server is running.
 
 By default only the main world (`gs01`) and one instance (`is61`) are started to save memory. More maps: `docker exec pw-server /root/server start-map <map id>`, the list of ids is in `game/server/root/pwserver/maps`.
 
@@ -151,6 +151,7 @@ Out of the box this server doesn't start, or starts and breaks in the client. Th
 | License end date 2090, but `UNIX_TIMESTAMP()` in MariaDB 10.11 stops at 2038 | `licenseservice.log`: *license time out*, all daemons quit, "server stops at 30%" | `entrypoint.sh` sets the date to 2037-12-31 on every start |
 | Daemons send `SIGUSR1` to their parent on startup | The control script dies after the first daemon, the rest never start | The control script runs inside a bash that traps `USR1` |
 | `docker stop` killed MariaDB without a clean shutdown | Container exit code 137, risk of database corruption | `SIGTERM` trap: `server stop`, then `mariadb-admin shutdown` |
+| `server stop` kills every daemon with `kill -9` | After a restart the last 5-10 minutes of play are rolled back | Before `server stop` the entrypoint stops `glinkd` and waits for a `gamedbd` checkpoint |
 | `serverlist.txt` points at the author's VirtualBox IP `192.168.0.195` | Client cannot find the server | Rewritten with `127.0.0.1`, keeping UTF-16 LE with BOM |
 | Pack files use Chinese (GBK) file names | In CrossOver/Wine: `?` instead of item and skill icons, missing effects | Bottle runs with `LANG=zh_CN.UTF-8`, the game text stays Russian |
 | Server binaries are x86-64 | Do not run on Apple Silicon natively | `platform: linux/amd64`, Rosetta runs them |

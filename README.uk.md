@@ -133,12 +133,12 @@ game\element\elementclient.exe game:cpw nocheck startbypatcher console:1
 | Дія | Команда |
 |---|---|
 | Запустити сервер | `docker compose up -d` (готовий приблизно за хвилину) |
-| Зупинити сервер | `docker compose stop` |
+| Зупинити сервер | `docker compose stop` (триває до двох хвилин) |
 | Логи сервера | `docker logs -f pw-server` |
 | Стан усіх демонів | `docker exec pw-server /root/server status` |
 | Створити ще акаунт | `scripts/macos/create-account.sh <логін> <пароль>` |
 
-Завжди зупиняйте сервер через `docker compose stop`. Він коректно вимикає гру, а потім MariaDB, і нічого не губиться. Не вбивайте Docker і не від'єднуйте диск, поки сервер працює.
+Завжди зупиняйте сервер через `docker compose stop` або кнопкою Stop в OrbStack / Docker Desktop. Контейнер відключає клієнтів, чекає, поки ігрова база запишеться на диск, і лише потім вимикає гру й MariaDB. Це триває від 30 секунд до двох хвилин, не переривайте зупинку. Для надійності вийдіть із гри перед зупинкою сервера. Не вбивайте Docker і не від'єднуйте диск, поки сервер працює.
 
 За замовчуванням для економії пам'яті запускаються лише основний світ (`gs01`) і один інстанс (`is61`). Інші карти: `docker exec pw-server /root/server start-map <id карти>`, список id у `game/server/root/pwserver/maps`.
 
@@ -151,6 +151,7 @@ game\element\elementclient.exe game:cpw nocheck startbypatcher console:1
 | Ліцензія до 2090 року, а `UNIX_TIMESTAMP()` у MariaDB 10.11 працює лише до 2038 | `licenseservice.log`: *license time out*, усі демони вимикаються, «сервер зупиняється на 30%» | `entrypoint.sh` при кожному старті ставить дату 2037-12-31 |
 | Демони при старті надсилають `SIGUSR1` батьківському процесу | Скрипт керування помирає після першого демона, решта не запускаються | Скрипт керування працює всередині bash, який перехоплює `USR1` |
 | `docker stop` вбивав MariaDB без коректного вимкнення | Код виходу контейнера 137, ризик пошкодити базу | Перехоплення `SIGTERM`: спершу `server stop`, потім `mariadb-admin shutdown` |
+| `server stop` вбиває всі демони через `kill -9` | Після перезапуску останні 5-10 хвилин гри відкочуються | Перед `server stop` entrypoint зупиняє `glinkd` і чекає на checkpoint `gamedbd` |
 | `serverlist.txt` вказує на IP VirtualBox автора `192.168.0.195` | Клієнт не знаходить сервер | Перезаписується з `127.0.0.1`, зі збереженням UTF-16 LE і BOM |
 | В архівах гри китайські (GBK) назви файлів | У CrossOver/Wine: `?` замість іконок предметів і вмінь, немає частини ефектів | Бутилка запускається з `LANG=zh_CN.UTF-8`, текст гри лишається російським |
 | Бінарники сервера під x86-64 | На Apple Silicon напряму не запускаються | `platform: linux/amd64`, їх запускає Rosetta |
