@@ -96,8 +96,8 @@ shutdown() {
 
 trap shutdown TERM INT
 
-# Surface the logs. /root/stop kills anything whose command line mentions licenseservice,
-# this tail included, so the container waits on its own sleep instead. wait lets the trap fire.
-tail -F /root/pwserver/logs/*.log &
+# The daemons write their own logs to files under /root/pwserver/logs. We do not stream
+# them here, so the container log shows only server start and stop. The container stays
+# up on this sleep, wait lets the trap fire.
 sleep infinity &
 wait $!
