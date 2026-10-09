@@ -33,6 +33,9 @@ echo "Unpacking server (about 7 GB)..."
 mkdir -p "$GAME/server" "$GAME/mysql"
 "$SEVENZIP" x "$SERVER_ARCHIVE" -o"$GAME/server" -aoa -bso0 -bsp0
 
+# Fix the licenseservice startup crash (see patch-licenseservice.sh).
+"$(dirname "$0")/patch-licenseservice.sh"
+
 echo "Unpacking client (about 27 GB)..."
 mkdir -p "$GAME/client"
 "$SEVENZIP" x "$CLIENT_ARCHIVE" -o"$GAME/client" -aoa -bso0 -bsp0

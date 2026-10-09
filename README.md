@@ -152,6 +152,7 @@ Out of the box this server doesn't start, or starts and breaks in the client. Th
 | Daemons send `SIGUSR1` to their parent on startup | The control script dies after the first daemon, the rest never start | The control script runs inside a bash that traps `USR1` |
 | `docker stop` killed MariaDB without a clean shutdown | Container exit code 137, risk of database corruption | `SIGTERM` trap: `server stop`, then `mariadb-admin shutdown` |
 | `server stop` kills every daemon with `kill -9` | After a restart the last 5-10 minutes of play are rolled back | Before `server stop` the entrypoint stops `glinkd` and waits for a `gamedbd` checkpoint |
+| `licenseservice` has a thread race in its session map and segfaults at random during start | `licenseservice.log`: *Signal: SIGUSR1* dump, all licensed daemons quit, client says the connection was dropped | `patch-licenseservice.sh` turns the unlocked heartbeat loop into a no-op (harmless offline); the entrypoint also retries start up to 3 times |
 | `serverlist.txt` points at the author's VirtualBox IP `192.168.0.195` | Client cannot find the server | Rewritten with `127.0.0.1`, keeping UTF-16 LE with BOM |
 | Pack files use Chinese (GBK) file names | In CrossOver/Wine: `?` instead of item and skill icons, missing effects | Bottle runs with `LANG=zh_CN.UTF-8`, the game text stays Russian |
 | Server binaries are x86-64 | Do not run on Apple Silicon natively | `platform: linux/amd64`, Rosetta runs them |

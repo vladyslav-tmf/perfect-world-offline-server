@@ -38,9 +38,28 @@ mariadb -u root -p"$DB_PASS" licenseservice \
 
 chmod -R 777 /root/pwserver
 
-# PW daemons send SIGUSR1 to their parent on startup. Sourcing the control
-# script into a bash that traps USR1 keeps it alive long enough to start everything.
-setsid bash -c "trap 'true' USR1; . /root/server start" || true
+game_alive() {
+    local p
+
+    for p in licenseservice gauthd gamedbd gdeliveryd glinkd gs; do
+        pgrep -x "$p" > /dev/null || return 1
+    done
+}
+
+# licenseservice sometimes segfaults during startup (always the same stack, not every boot),
+# and every licensed daemon quits after it. server start begins with /root/stop, so retrying is safe.
+for attempt in 1 2 3; do
+    # PW daemons send SIGUSR1 to their parent on startup. Sourcing the control
+    # script into a bash that traps USR1 keeps it alive long enough to start everything.
+    setsid bash -c "trap 'true' USR1; . /root/server start" || true
+    sleep 20
+
+    if game_alive; then
+        break
+    fi
+
+    echo "WARNING: game daemons died during start (attempt $attempt of 3)"
+done
 
 # /root/server stop kills everything with -9, so players and gamedbd lose unsaved data.
 # Drop the clients first (gs saves a role when its link goes away), then wait for
@@ -77,6 +96,8 @@ shutdown() {
 
 trap shutdown TERM INT
 
-# Keep the container alive and surface the logs. wait lets the trap fire.
+# Surface the logs. /root/stop kills anything whose command line mentions licenseservice,
+# this tail included, so the container waits on its own sleep instead. wait lets the trap fire.
 tail -F /root/pwserver/logs/*.log &
+sleep infinity &
 wait $!

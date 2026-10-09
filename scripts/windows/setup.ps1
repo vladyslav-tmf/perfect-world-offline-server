@@ -42,6 +42,9 @@ Write-Host "Unpacking server (about 7 GB)..."
 New-Item -ItemType Directory -Force -Path (Join-Path $Game "server"), (Join-Path $Game "mysql") | Out-Null
 & $SevenZip x $ServerArchive "-o$(Join-Path $Game 'server')" -aoa -bso0 -bsp0
 
+# Fix the licenseservice startup crash (see patch-licenseservice.ps1).
+& (Join-Path $PSScriptRoot "patch-licenseservice.ps1")
+
 Write-Host "Unpacking client (about 27 GB)..."
 New-Item -ItemType Directory -Force -Path (Join-Path $Game "client") | Out-Null
 & $SevenZip x $ClientArchive "-o$(Join-Path $Game 'client')" -aoa -bso0 -bsp0
